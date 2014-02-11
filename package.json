@@ -1,0 +1,28 @@
+{
+  "author": "Thomas Cholley <cholley.t@gmail.com>",
+  "name": "elasticmongoose",
+  "description": "Just a simple mongoose plugin for elastic search indexing",
+  "version": "0.0.1",
+  "tags":["mongoose", "mongodb", "elasticsearch"],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/"
+  },
+  "main":"lib/elasticmongoose.js",
+  "dependencies": {
+    "elasticsearch":"1.0.3",
+    "underscore": "~1.5.2",
+    "q": "~0.9.7"
+  },
+  "peerDependencies": {
+    "mongoose":"3.8.x"
+  },
+  "devDependencies": {
+    "mocha":"*",
+    "should":"*",
+    "mongoose":"~3.8.1"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  }
+}
