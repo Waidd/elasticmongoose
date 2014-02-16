@@ -3,26 +3,37 @@
   "name": "elasticmongoose",
   "description": "Just a simple mongoose plugin for elastic search indexing",
   "version": "0.0.1",
-  "tags":["mongoose", "mongodb", "elasticsearch"],
+  "keywords": [
+    "mongoose",
+    "mongodb",
+    "elasticsearch"
+  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/"
+    "url": "git://github.com/Waidd/elasticmongoose"
   },
-  "main":"lib/elasticmongoose.js",
+  "main": "lib/elasticmongoose.js",
   "dependencies": {
-    "elasticsearch":"1.0.3",
+    "elasticsearch": "1.0.3",
     "underscore": "~1.5.2",
     "q": "~0.9.7"
   },
   "peerDependencies": {
-    "mongoose":"3.8.x"
+    "mongoose": "3.8.x"
   },
   "devDependencies": {
-    "mocha":"*",
-    "should":"*",
-    "mongoose":"~3.8.1"
+    "mocha": "*",
+    "should": "*",
+    "mongoose": "~3.8.1"
   },
   "engines": {
     "node": ">= 0.8.0"
+  },
+  "bugs": {
+    "url": "https://github.com/Waidd/ElasticMongoose/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
