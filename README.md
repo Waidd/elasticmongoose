@@ -174,9 +174,9 @@ elasticMongoose.search(options, query, function(err, resp){
 ```
 If an object is still in elastic but not anymore in mongodb, the plugin will log a error with `errorCallback` and keep a normal behaviour. This kind of probrem can happen if the cluster is down for a while.
 
-## Truncate Index
+## Truncate an index
 
-If you need to truncate an ElasticSearch index (during unit tests for example), you can use the `trucante` method :
+If you need to truncate an elasticsearch index (during unit tests for example), you can use the `trucante` method :
 
 ```javascript
   elasticMongoose.truncate(function(err){
@@ -188,12 +188,25 @@ If you need to truncate an ElasticSearch index (during unit tests for example), 
 
 As usual, if you specified a index during the initialization, you do not have to give any options.
 
+## Refresh an index
+
+If you need to manually refresh an elasticsearch index (also during some unit tests), you can use the `refresh` method :
+
+```javascript
+  elasticMongoose.refresh(function(err){
+    done (err);
+  }, {
+    index : 'someindex'
+  });
+```
+
+Same options management than `truncate`. 
+
 ## Todo
 
 * some unit tests
 * some examples
 * method to index all data in mongodb
-* method to flush all data in elastic
 
 ## License
 
