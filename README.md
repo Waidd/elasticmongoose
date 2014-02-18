@@ -85,6 +85,98 @@ Something.plugin(elasticMongoose.mongoosePlugin(), {
 ```
 Then mongoose will be automatically indexed, updated, deleted in elasticsearch while your are manipulating the mongoose object.
 
+#### Nested object
+
+The plugin will automatically detect nested object : 
+
+```javascript
+var nestedthing = {
+  city : {
+    type : String,
+    elastic : true //will be indexed    
+  }
+};
+
+var Something = new Schema({
+  title : {
+    type : String,
+    elastic : true
+  },
+  description : {
+    type : String,
+    elastic : true
+  },
+  content : {
+    type : String
+  },
+  thing : nestedthing
+}
+});
+```
+Nested data will be stored at the first level of the elastic object. So the object in elastic will look like :
+
+```javascript
+{
+  'title' : '...',
+  'description' : '...',
+  'city' : '...'
+}
+```
+
+#### `array` type
+
+If you have to manage with a `Types.Mixed`, for example, to manipulate a osm address, you can use the `array` type :
+
+```javascript
+//the mongoose schema
+var SomeWhere = new Schema({
+  title : {
+    type : String,
+    elastic : true
+  },
+  description : {
+    type : String
+  },
+  address : {
+    type : Types.Mixed
+    elastic : 'array'
+  }
+});
+
+//the mongodb object will look like
+{
+  title: 'somewhere',
+  description: 'est sequi et cupiditate corrupti et porro nomnis...',
+  address : {
+    continent: 'European Union',
+    country_code: 'fr',
+    country: 'France',
+    postcode: '...',
+    state: '...',
+    county: '...',
+    city: '...',
+    pedestrian: '...',
+    house_number: '...'
+  }
+}
+
+//and the elastic object
+{
+  title: 'somewhere',
+  continent: 'European Union',
+  country_code: 'fr',
+  country: 'France',
+  postcode: '...',
+  state: '...',
+  county: '...',
+  city: '...',
+  pedestrian: '...',
+  house_number: '...'
+}
+```
+
+
+
 ### Search
 
 ```javascript
