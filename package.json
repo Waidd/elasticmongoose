@@ -31,7 +31,7 @@
     "node": ">= 0.8.0"
   },
   "bugs": {
-    "url": "https://github.com/Waidd/ElasticMongoose/issues"
+    "url": "https://github.com/Waidd/elasticmongoose/issues"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
