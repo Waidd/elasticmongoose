@@ -25,7 +25,7 @@ elasticMongoose.connect(function(err) {
 });
 ```
 
-This call just initialize a client and ping the elasticsearch cluster to check if he is online. The default host will be `localhost:9200`. You can override options this way :
+This call just initializes a client and pings the elasticsearch cluster to check if it is online. The default host will be `localhost:9200`. You can override options this way :
 
 ```javascript
 var elasticMongoose = require('elasticmongoose');
@@ -42,10 +42,10 @@ elasticMongoose.connect(function(err) {
 Here is the list of options that you can specify :
 * `index` : Default index for elasticsearch, initially set to `elasticmongoose`.
 * `successCallback` : Callback for log successfull operations. Initially do a simple `console.log`.
-* `errorCallback` : Callback for log failed operations. Initially have the same behaviour that `successCallback`.
-* `findMethod` : Default methods for get object from mongoose, more details in the search section.
+* `errorCallback` : Callback for log failed operations. Initially has the same behaviour as `successCallback`.
+* `findMethod` : Default methods to get object from mongoose, more details in the search section.
 
-Some operations of the plugin doesn't allow to return an error or informations, so this is why it's necessary to define `successCallback` and `errorCallback`. 
+Some operations of the plugin don't allow to return an error or information, so this is why it's necessary to define `successCallback` and `errorCallback`. 
 
 ### Add elasticMongoose to a Schema
 
@@ -75,7 +75,7 @@ module.exports = mongoose.model('something', Something);
 
 Set the fields that you want to see indexed with `elastic : true`.
 The second argument to specify to the `Plugin` is the options object.
-If you have chosed a default index in the initialization part, you just have to give the name of the type, who NEED to be the same that the schema name (it's necessary for the search). Otherwise you have to give the index too :
+If you have chosen a default index in the initialization part, you just have to give the name of the type, which NEEDS to be the same as the schema name (it's necessary for the search). Otherwise you have to give the index too :
 
 ```javascript
 Something.plugin(elasticMongoose.mongoosePlugin(), {
@@ -87,7 +87,7 @@ Then mongoose will be automatically indexed, updated, deleted in elasticsearch w
 
 #### Nested object
 
-The plugin will automatically detect nested object : 
+The plugin will automatically detect nested object(s) : 
 
 ```javascript
 var nestedthing = {
@@ -125,7 +125,7 @@ Nested data will be stored at the first level of the elastic object. So the obje
 
 #### `array` type
 
-If you have to manage with a `Types.Mixed`, for example, to manipulate a osm address, you can use the `array` type :
+If you have to deal with a `Types.Mixed`, for example, to manipulate a osm address, you can use the `array` type :
 
 ```javascript
 //the mongoose schema
@@ -191,7 +191,7 @@ elasticMongoose.search(options, query, function(err, resp){
 });
 ```
 
-The options are defined by the type and the index. But once more, if you have specified a default index in the initialization part, you do not have to give it again. The type can be unique or an array of type.
+The options are defined by the type and the index. But once more, if you have specified a default index in the initialization part, you do not have to give it again. The type can be unique or an array of types.
 
 ```javascript
 options = {
@@ -264,11 +264,11 @@ elasticMongoose.search(options, query, function(err, resp){
   }
 }, options);
 ```
-If an object is still in elastic but not anymore in mongodb, the plugin will log a error with `errorCallback` and keep a normal behaviour. This kind of probrem can happen if the cluster is down for a while.
+If an object is still in elastic but not anymore in mongodb, the plugin will log an error with `errorCallback` and keep a normal behaviour. This kind of probrem can happen if the cluster is down for a while.
 
 ## Truncate an index
 
-If you need to truncate an elasticsearch index (during unit tests for example), you can use the `trucante` method :
+If you need to truncate an elasticsearch index (during unit tests for example), you can use the `truncate` method :
 
 ```javascript
   elasticMongoose.truncate(function(err){
@@ -278,7 +278,7 @@ If you need to truncate an elasticsearch index (during unit tests for example), 
   });
 ```
 
-As usual, if you specified a index during the initialization, you do not have to give any options.
+As usual, if you specified an index during the initialization, you do not have to give any options.
 
 ## Refresh an index
 
