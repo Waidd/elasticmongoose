@@ -17,7 +17,8 @@
   "dependencies": {
     "elasticsearch": "1.0.3",
     "underscore": "~1.5.2",
-    "q": "~0.9.7"
+    "q": "~0.9.7",
+    "winston": "~0.7.2"
   },
   "peerDependencies": {
     "mongoose": "3.8.x"
