@@ -41,11 +41,11 @@ elasticMongoose.connect(function(err) {
 
 Here is the list of options that you can specify :
 * `index` : Default index for elasticsearch, initially set to `elasticmongoose`.
-* `successCallback` : Callback for log successfull operations. Initially do a simple `console.log`.
-* `errorCallback` : Callback for log failed operations. Initially has the same behaviour as `successCallback`.
 * `findMethod` : Default methods to get object from mongoose, more details in the search section.
 
-Some operations of the plugin don't allow to return an error or information, so this is why it's necessary to define `successCallback` and `errorCallback`. 
+### Log
+
+The plugin use [winston](https://github.com/flatiron/winston) to output log. The destination file is `elasticmongoose.log`.
 
 ### Add elasticMongoose to a Schema
 
@@ -175,7 +175,50 @@ var SomeWhere = new Schema({
 }
 ```
 
+#### `function` type
 
+You can give a function instead of a type. This function will be called during the indexation of the object.
+
+```javascript
+var Something = new Schema({
+  title : {
+    type : String,
+    elastic : true
+  },
+  content : {
+    type : String,
+    elastic : function(obj, fields) {
+      if (obj.indexContent)
+        fields.content = obj.content.substr(0, 100);
+    }
+  },
+  indexContent : {
+    type : Boolean,
+    'default' : false
+  }
+});
+````
+
+The function takes 2 parameters :
+* `obj` : the mongo object
+* `fields` : the indexed fields
+
+#### `geojson` type
+
+You can deal with `geojson` type to perform localised search.
+
+```javascript
+var Somewhere = new Schema({
+  title : {
+    type : String,
+    elastic : true
+  },
+  loc : {
+    type : String,
+    elastic : 'geojson'
+  },
+});
+```
 
 ### Search
 
@@ -215,7 +258,7 @@ query = {
     title : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: 'Etiam at mauris tristique, adipiscing enim a, malesuada nisi.'
   }
-}
+};
 ```
 ```javascript
 query = {
@@ -223,8 +266,22 @@ query = {
     query: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     fields: ['title', 'description']
   }
-}
+};
 //the multi_match work with fields from different type
+```
+```javascript
+query = {
+  filtered : {
+    multi_match : {},
+    filter : {
+      distance : '10km',
+      location : {
+        lat : '45.439417',
+        lon : '12.328865'
+      }
+    }
+  }
+};
 ```
 
 ElasticMongoose will return an array of mongo objects. So it's easier to manipulate. The plugin will use the default `findMethod` to get the objects from mongo : 
