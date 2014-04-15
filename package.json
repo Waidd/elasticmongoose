@@ -2,7 +2,7 @@
   "author": "Thomas Cholley <cholley.t@gmail.com>",
   "name": "elasticmongoose",
   "description": "Just a simple mongoose plugin for elastic search indexing",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "keywords": [
     "mongoose",
     "mongodb",
@@ -15,7 +15,7 @@
   },
   "main": "lib/elasticmongoose.js",
   "dependencies": {
-    "elasticsearch": "1.0.3",
+    "elasticsearch": "2.1.4",
     "underscore": "~1.5.2",
     "q": "~0.9.7",
     "winston": "~0.7.2"
