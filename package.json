@@ -1,0 +1,45 @@
+{
+  "author": {
+    "name": "Brian Thibault",
+    "email": "thibault@clarastream.com"
+  },
+  "name": "elasticgoose",
+  "description": "Just a simple mongoose plugin for elastic search indexing",
+  "version": "0.1.0",
+  "keywords": [
+    "mongoose",
+    "mongodb",
+    "elasticsearch"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ClaraStream/elasticgoose.git"
+  },
+  "main": "lib/elasticgoose.js",
+  "dependencies": {
+    "elasticsearch": "~2.1.4",
+    "underscore": "~1.5.2",
+    "q": "~0.9.7",
+    "winston": "~0.7.2",
+    "async": "~0.9.-"
+  },
+  "peerDependencies": {
+    "mongoose": "3.8.x"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "mongoose": "~3.8.1"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "bugs": {
+    "url": "https://github.com/ClaraStream/elasticgoose/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "homepage": "https://github.com/ClaraStream/elasticgoose"
+}
