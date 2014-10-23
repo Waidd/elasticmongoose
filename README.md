@@ -1,12 +1,24 @@
-# ElasticMongoose
+# elasticgoose
 
 Just a simple [mongoose](http://mongoosejs.com/) plugin for [elasticsearch](http://www.elasticsearch.org/) indexing, based on [elasticsearch.js](http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/index.html).
+
+## Notes
+
+This was originally forked https://github.com/Waidd/elasticmongoose. It didn't seem to be in active development. It was a library we becoming dependant on at ClaraStream. Please note this is not production ready yet, and won't be until it reaches version 1.0.
+
+Immediate TODOs: 
+* Update the README usage docs
+* Update the config object to include timeout settings
+* Make all methods asynchronous, using async library for flow control 
+* Write unit tests around all methods
+* Figure out how to keep deletions from MongoDB in sync with ElasticSearch
+
+
 
 ## Installation
 
 ```bash
-cd node_modules
-git clone https://github.com/Waidd/elasticmongoose.git
+npm install --save elasticgoose
 ```
 
 Or add it to your package.json
@@ -18,9 +30,9 @@ Or add it to your package.json
 First, you have to initialize the plugin with the connect method.
 
 ```javascript
-var elasticMongoose = require('elasticmongoose');
+var elasticgoose = require('elasticgoose');
 
-elasticMongoose.connect(function(err) {
+elasticgoose.connect(function(err) {
 	if (err) console.log('elasticsearch cluster down');
 });
 ```
@@ -28,31 +40,31 @@ elasticMongoose.connect(function(err) {
 This call just initializes a client and pings the elasticsearch cluster to check if it is online. The default host will be `localhost:9200`. You can override options this way :
 
 ```javascript
-var elasticMongoose = require('elasticmongoose');
+var elasticgoose = require('elasticgoose');
 
 var options = {
   host : 'host.com:4242'
 };
 
-elasticMongoose.connect(function(err) {
+elasticgoose.connect(function(err) {
   if (err) console.log('elasticsearch cluster down');
 }, options);
 ```
 
 Here is the list of options that you can specify :
-* `index` : Default index for elasticsearch, initially set to `elasticmongoose`.
+* `index` : Default index for elasticsearch, initially set to `elasticgoose`.
 * `findMethod` : Default methods to get object from mongoose, more details in the search section.
 
 ### Log
 
-The plugin use [winston](https://github.com/flatiron/winston) to output log. The destination file is `elasticmongoose.log`.
+The plugin use [winston](https://github.com/flatiron/winston) to output log. The destination file is `elasticgoose.log`.
 
-### Add elasticMongoose to a Schema
+### Add elasticgoose to a Schema
 
 ```javascript
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var elasticMongoose = require('elasticmongoose');
+var elasticgoose = require('elasticgoose');
 
 var Something = new Schema({
   title : {
@@ -69,7 +81,7 @@ var Something = new Schema({
 }
 });
 
-Something.plugin(elasticMongoose.mongoosePlugin(), 'something');
+Something.plugin(elasticgoose.mongoosePlugin(), 'something');
 module.exports = mongoose.model('something', Something);
 ```
 
@@ -78,7 +90,7 @@ The second argument to specify to the `Plugin` is the options object.
 If you have chosen a default index in the initialization part, you just have to give the name of the type, which NEEDS to be the same as the schema name (it's necessary for the search). Otherwise you have to give the index too :
 
 ```javascript
-Something.plugin(elasticMongoose.mongoosePlugin(), {
+Something.plugin(elasticgoose.mongoosePlugin(), {
   index : 'someindex',
   type : 'something'
 });
@@ -223,9 +235,9 @@ var Somewhere = new Schema({
 ### Search
 
 ```javascript
-var elasticMongoose = require('elasticmongoose');
+var elasticgoose = require('elasticgoose');
 
-elasticMongoose.search(options, query, function(err, resp){
+elasticgoose.search(options, query, function(err, resp){
   if(err){
     res.error(err);
   } else {
@@ -284,7 +296,7 @@ query = {
 };
 ```
 
-ElasticMongoose will return an array of mongo objects. So it's easier to manipulate. The plugin will use the default `findMethod` to get the objects from mongo : 
+elasticgoose will return an array of mongo objects. So it's easier to manipulate. The plugin will use the default `findMethod` to get the objects from mongo : 
 
 ```javascript
   findMethod(model, data, callback){
@@ -310,10 +322,10 @@ Something.methods.elasticFind = function(model, data, callback, options){
     });
 };
 
-Something.plugin(ElasticMongoose.mongoosePlugin(), 'event');
+Something.plugin(elasticgoose.mongoosePlugin(), 'event');
 
 //then
-elasticMongoose.search(options, query, function(err, resp){
+elasticgoose.search(options, query, function(err, resp){
   if(err){
     res.error(err);
   } else {
@@ -328,7 +340,7 @@ If an object is still in elastic but not anymore in mongodb, the plugin will log
 If you need to truncate an elasticsearch index (during unit tests for example), you can use the `truncate` method :
 
 ```javascript
-  elasticMongoose.truncate(function(err){
+  elasticgoose.truncate(function(err){
     done(err);
   }, {
     index : 'someindex'
@@ -342,7 +354,7 @@ As usual, if you specified an index during the initialization, you do not have t
 If you need to manually refresh an elasticsearch index (also during some unit tests), you can use the `refresh` method :
 
 ```javascript
-  elasticMongoose.refresh(function(err){
+  elasticgoose.refresh(function(err){
     done (err);
   }, {
     index : 'someindex'
@@ -350,12 +362,6 @@ If you need to manually refresh an elasticsearch index (also during some unit te
 ```
 
 Same options management than `truncate`. 
-
-## Todo
-
-* some unit tests
-* some examples
-* method to index all data in mongodb
 
 ## License
 
