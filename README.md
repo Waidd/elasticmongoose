@@ -4,7 +4,7 @@ Just a simple [mongoose](http://mongoosejs.com/) plugin for [elasticsearch](http
 
 ## Notes
 
-This was originally forked from https://github.com/Waidd/elasticmongoose. It didn't seem to be in active development. It was a library we become dependant on at ClaraStream. Please note that this library is not production ready yet, and won't be until it reaches version 1.0.
+Originally forked from https://github.com/Waidd/elasticmongoose. 
 
 Immediate TODOs: 
 * Update the README usage docs
@@ -12,7 +12,7 @@ Immediate TODOs:
 * Make all methods asynchronous, using async library for flow control 
 * Write unit tests around all methods
 * Figure out how to keep deletions from MongoDB in sync with ElasticSearch
-
+* Figure out how to add dynamic template mapping in order to further support the object type
 
 
 ## Installation
@@ -21,47 +21,78 @@ Immediate TODOs:
 npm install --save elasticgoose
 ```
 
-Or add it to your package.json
-
 ## Usage
 
 ### Initialization
 
-First, you have to initialize the plugin with the connect method.
+The plugin is initialized with the connect method. The method requires a mongoose object and it is highly advised to
+establish your mongoose connection prior to calling this method. You are less likely to run into thrown MissingSchemaTypeErrors if you allow mongoose to load all of your models and establish its connection before initalizing the plugin.
 
 ```javascript
 var mongoose = require('mongoose');
 var elasticgoose = require('elasticgoose');
+var dbURL = 'mongodb://username:password@yourMongoURL.com';
 
-elasticgoose.connect(mongoose, function(err) {
-	if (err) console.log('elasticsearch cluster down');
+/* load all of your mongoose models */
+
+mongoose.connect(dbURL);
+var db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback() {
+  console.log('MongoDB connected @ ' + dbURL);
+
+  elasticgoose.connect(mongoose, function (err) {
+     if (err) {
+        console.log('elasticsearch cluster down');
+        console.error(err);
+     } else {
+        console.log('elasticSearch connected');
+     }
+  });
 });
 ```
 
-This call just initializes a client and pings the elasticsearch cluster to check if it is online. The default host will be `localhost:9200`  but you can override the default options by passing it as an argument on connect :
+This call just initializes a client and pings the elasticsearch cluster to check if it is online. By default, the host is set to `localhost:9200`. You can override the default options by passing your config as an argument on connect :
 
 ```javascript
 var mongoose = require('mongoose');
 var elasticgoose = require('elasticgoose');
+var dbURL = 'mongodb://username:password@yourMongoURL.com';
+
+/* load all of your mongoose models */
 
 var options = {
   host : 'host.com:4242'
 };
 
-elasticgoose.connect(monggose, function(err) {
-  if (err) console.log('elasticsearch cluster down');
-}, options);
+mongoose.connect(dbURL);
+var db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback() {
+  console.log('MongoDB connected @ ' + dbURL);
+
+  elasticgoose.connect(mongoose, function (err) {
+     if (err) {
+        console.log('elasticsearch cluster down');
+        console.error(err);
+     } else {
+        console.log('elasticSearch connected');
+     }
+  }, options);
+});
 ```
 
-Here are the list of options that you can specify :
+The list of options that you can specify are :
 * `index` : Default index for elasticsearch, initially set to `elasticgoose`.
 * `findMethod` : Default methods used to get an object from mongoose, more details in the search section.
 
 ### Log
 
-The plugin use [winston](https://github.com/flatiron/winston) to output log. The destination file is `elasticgoose.log`.
+The plugin uses [winston](https://github.com/flatiron/winston) to log its output into the destination file `elasticgoose.log`.
 
-### Add elasticgoose to a Schema
+### Adding elasticgoose to a Mongoose Schema
 
 ```javascript
 var mongoose = require('mongoose');
@@ -104,7 +135,7 @@ Then mongoose will be automatically indexed, updated, deleted in elasticsearch w
 The plugin will automatically detect nested object(s) : 
 
 ```javascript
-var nestedthing = {
+var nestedThing = {
   city : {
     type : String,
     elastic : true //will be indexed    
@@ -236,53 +267,35 @@ var Somewhere = new Schema({
 #### `object` type
 
 The elasticsearch library for elasticgoose has been upgraded to support the object type mapping in elasticsearch.
-Elasticsearch will index all of the object data by default. You can manage your object data through the use of 
-[dynamic templates](https://www.elastic.co/guide/en/elasticsearch/reference/1.x/mapping-root-object-type.html).
+Elasticsearch will index all of the object data by default, including nested data, and flatten it out. You can manage your object data through the use of 
+[dynamic templates](https://www.elastic.co/guide/en/elasticsearch/reference/1.x/mapping-root-object-type.html); however, this feature is not yet implemented in elasticgoose so it has be done manually through the elasticsearch API.
 
-```javascript
-var Somewhere = new Schema({
-  somewhereObj : {
-    type : Schema.Types.Mixed,
-    elastic : 'object'
-  }
-});
-
-//the mongodb object will look like
-{
-  title: 'somewhere',
-  address : {
-    continent: 'European Union',
-    country_code: 'fr',
-    country: 'France',
-    postcode: '...',
-    state: '...',
-    county: '...',
-    city: '...',
-    pedestrian: '...',
-    house_number: '...',
-    nestedInfo: {
-      tenants: '...',
-      landLord: '...'
-    }
+```bash
+curl -XPOST http://localhost:9200/FooIndex/Foo/_mapping -d  '
+{    
+   "Foo" : {
+    "properties" : {
+      "bar" : {
+        "type" : "object"
+      }
+    },
+    "dynamic_templates" : [
+      {
+        "example_mapping_template" : {
+          "path_match" : "bar.*",
+          "mapping" : {
+            "store" : "yes",
+            "index" : "no"
+          }
+        }
+      }
+    ]
   }
 }
-
-//and by default the elastic object (you can specify to elasticsearch to store it in its original format)
-{
-  title: 'somewhere',
-  continent: 'European Union',
-  country_code: 'fr',
-  country: 'France',
-  postcode: '...',
-  state: '...',
-  county: '...',
-  city: '...',
-  pedestrian: '...',
-  house_number: '...',
-  tenants: '...',
-  landLord: '...'
-}
+'
 ```
+In this example, all of the data nested within the bar field will be stored but not indexed. This comes in handy if you wish to retrieve the bar field as an object and manually alter its data.
+
 ### Search
 
 ```javascript
@@ -347,7 +360,7 @@ query = {
 };
 ```
 
-elasticgoose will return an array of mongo objects. So it's easier to manipulate. The plugin will use the default `findMethod` to get the objects from mongo : 
+elasticgoose will return an array of mongo objects, so that it's easier to manipulate. The plugin will use the default `findMethod` in order to retrieve the objects from mongo : 
 
 ```javascript
   findMethod(model, data, callback){
@@ -357,7 +370,7 @@ elasticgoose will return an array of mongo objects. So it's easier to manipulate
   }
 ```
 
-You can't overwrite it during the initialization or give a specific method for a type defining a `elasticFind` method to the schema. 
+You can't overwrite it during the initialization or assign a specific method for a type defining a `elasticFind` method to the schema. 
 
 ```javascript
 Something.methods.elasticFind = function(model, data, callback, options){
@@ -384,7 +397,7 @@ elasticgoose.search(options, query, function(err, resp){
   }
 }, options);
 ```
-If an object is still in elastic but not anymore in mongodb, the plugin will log an error with `errorCallback` and keep a normal behaviour. This kind of probrem can happen if the cluster is down for a while.
+If an object is still in elastic but not in mongodb, the plugin will log an error with `errorCallback` and keep a normal behaviour. This kind of problem can happen if the cluster is down for a while.
 
 ## Truncate an index
 
@@ -414,10 +427,11 @@ If you need to manually refresh an elasticsearch index (also during some unit te
 
 Same options management than `truncate`. 
 
-## Latest Changes
+## Change Log
 
-Elasticgoose upgraded its elasticsearch library to version 4.0.x in order to support elasticsearch versions 0.9 to 1.4.
-A Mongoose object must be passed on connect now in order to allow access to your registered Mongoose models. 
+* Elasticgoose upgraded its elasticsearch library to version 4.0.x in order to support elasticsearch versions 0.9 to 1.4.
+
+* A Mongoose object must be passed on connect in order to allow elasticgoose access to your registered Mongoose models and to help keep data consistent between mongoDB and elastic. 
 
 ## License
 
