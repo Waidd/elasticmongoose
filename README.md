@@ -4,7 +4,7 @@ Just a simple [mongoose](http://mongoosejs.com/) plugin for [elasticsearch](http
 
 ## Notes
 
-This was originally forked from https://github.com/Waidd/elasticmongoose. It didn't seem to be in active development. It was a library we becoming dependant on at ClaraStream. Please note that this library is not production ready yet, and won't be until it reaches version 1.0.
+This was originally forked from https://github.com/Waidd/elasticmongoose. It didn't seem to be in active development. It was a library we become dependant on at ClaraStream. Please note that this library is not production ready yet, and won't be until it reaches version 1.0.
 
 Immediate TODOs: 
 * Update the README usage docs
@@ -233,7 +233,7 @@ var Somewhere = new Schema({
   },
 });
 ```
-#### 'object' type
+#### `object` type
 
 The elasticsearch library for elasticgoose has been upgraded to support the object type mapping in elasticsearch.
 Elasticsearch will index all of the object data by default. You can manage your object data through the use of 
