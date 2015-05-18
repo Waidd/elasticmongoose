@@ -4,7 +4,7 @@ Just a simple [mongoose](http://mongoosejs.com/) plugin for [elasticsearch](http
 
 ## Notes
 
-This was originally forked https://github.com/Waidd/elasticmongoose. It didn't seem to be in active development. It was a library we becoming dependant on at ClaraStream. Please note this is not production ready yet, and won't be until it reaches version 1.0.
+This was originally forked from https://github.com/Waidd/elasticmongoose. It didn't seem to be in active development. It was a library we becoming dependant on at ClaraStream. Please note that this library is not production ready yet, and won't be until it reaches version 1.0.
 
 Immediate TODOs: 
 * Update the README usage docs
@@ -30,30 +30,32 @@ Or add it to your package.json
 First, you have to initialize the plugin with the connect method.
 
 ```javascript
+var mongoose = require('mongoose');
 var elasticgoose = require('elasticgoose');
 
-elasticgoose.connect(function(err) {
+elasticgoose.connect(mongoose, function(err) {
 	if (err) console.log('elasticsearch cluster down');
 });
 ```
 
-This call just initializes a client and pings the elasticsearch cluster to check if it is online. The default host will be `localhost:9200`. You can override options this way :
+This call just initializes a client and pings the elasticsearch cluster to check if it is online. The default host will be `localhost:9200`  but you can override the default options by passing it as an argument on connect :
 
 ```javascript
+var mongoose = require('mongoose');
 var elasticgoose = require('elasticgoose');
 
 var options = {
   host : 'host.com:4242'
 };
 
-elasticgoose.connect(function(err) {
+elasticgoose.connect(monggose, function(err) {
   if (err) console.log('elasticsearch cluster down');
 }, options);
 ```
 
-Here is the list of options that you can specify :
+Here are the list of options that you can specify :
 * `index` : Default index for elasticsearch, initially set to `elasticgoose`.
-* `findMethod` : Default methods to get object from mongoose, more details in the search section.
+* `findMethod` : Default methods used to get an object from mongoose, more details in the search section.
 
 ### Log
 
@@ -87,7 +89,7 @@ module.exports = mongoose.model('something', Something);
 
 Set the fields that you want to see indexed with `elastic : true`.
 The second argument to specify to the `Plugin` is the options object.
-If you have chosen a default index in the initialization part, you just have to give the name of the type, which NEEDS to be the same as the schema name (it's necessary for the search). Otherwise you have to give the index too :
+If you have chosen a default index in the initialization part, you just have to give the name of the type, which NEEDS to be the same as the schema name (it's necessary for the search). Otherwise, you have to give the index too :
 
 ```javascript
 Something.plugin(elasticgoose.mongoosePlugin(), {
@@ -231,7 +233,56 @@ var Somewhere = new Schema({
   },
 });
 ```
+#### 'object' type
 
+The elasticsearch library for elasticgoose has been upgraded to support the object type mapping in elasticsearch.
+Elasticsearch will index all of the object data by default. You can manage your object data through the use of 
+[dynamic templates](https://www.elastic.co/guide/en/elasticsearch/reference/1.x/mapping-root-object-type.html).
+
+```javascript
+var Somewhere = new Schema({
+  somewhereObj : {
+    type : Schema.Types.Mixed,
+    elastic : 'object'
+  }
+});
+
+//the mongodb object will look like
+{
+  title: 'somewhere',
+  address : {
+    continent: 'European Union',
+    country_code: 'fr',
+    country: 'France',
+    postcode: '...',
+    state: '...',
+    county: '...',
+    city: '...',
+    pedestrian: '...',
+    house_number: '...',
+    nestedInfo: {
+      tenants: '...',
+      landLord: '...'
+    }
+  }
+}
+
+//and by default the elastic object (you can specify to elasticsearch to store it in its original format)
+{
+  title: 'somewhere',
+  continent: 'European Union',
+  country_code: 'fr',
+  country: 'France',
+  postcode: '...',
+  state: '...',
+  county: '...',
+  city: '...',
+  pedestrian: '...',
+  house_number: '...',
+  tenants: '...',
+  landLord: '...'
+}
+```
 ### Search
 
 ```javascript
@@ -362,6 +413,11 @@ If you need to manually refresh an elasticsearch index (also during some unit te
 ```
 
 Same options management than `truncate`. 
+
+## Latest Changes
+
+Elasticgoose upgraded its elasticsearch library to version 4.0.x in order to support elasticsearch versions 0.9 to 1.4.
+A Mongoose object must be passed on connect now in order to allow access to your registered Mongoose models. 
 
 ## License
 

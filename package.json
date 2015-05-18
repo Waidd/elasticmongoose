@@ -5,7 +5,7 @@
   },
   "name": "elasticgoose",
   "description": "Just a simple mongoose plugin for elastic search indexing",
-  "version": "0.1.2",
+  "version": "0.2.1",
   "keywords": [
     "mongoose",
     "mongodb",
@@ -18,11 +18,12 @@
   },
   "main": "lib/elasticgoose.js",
   "dependencies": {
-    "elasticsearch": "3.1.x",
+    "elasticsearch": "4.0.x",
     "underscore": "~1.5.2",
     "q": "~0.9.7",
     "winston": "~0.7.2",
-    "async": "~0.9"
+    "async": "~0.9",
+    "mongoose": "~3.8.16"
   },
   "peerDependencies": {
     "mongoose": "3.8.x"
