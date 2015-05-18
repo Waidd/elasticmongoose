@@ -5,7 +5,7 @@
   },
   "name": "elasticgoose",
   "description": "Just a simple mongoose plugin for elastic search indexing",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "keywords": [
     "mongoose",
     "mongodb",
