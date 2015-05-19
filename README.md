@@ -285,7 +285,7 @@ curl -XPOST http://localhost:9200/FooIndex/Foo/_mapping -d  '
           "path_match" : "bar.*",
           "mapping" : {
             "store" : "yes",
-            "index" : "no"
+            "index" : "not_analyzed"
           }
         }
       }
@@ -294,7 +294,7 @@ curl -XPOST http://localhost:9200/FooIndex/Foo/_mapping -d  '
 }
 '
 ```
-In this example, all of the data nested within the bar field will be stored but not indexed. This comes in handy if you wish to retrieve the bar field as an object and manually alter its data.
+In this example, all of the data nested within the bar field will be stored and indexed. However, the indexed value will not be analyzed so it will be stored exactly as specified. This comes in handy if you wish to retrieve the bar field as an object, yet still be able to search for any of its nested fields.
 
 ### Search
 
