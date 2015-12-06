@@ -1,8 +1,12 @@
 {
   "author": "Thomas Cholley <cholley.t@gmail.com>",
-  "name": "elasticmongoose",
+  "name": "elasticgoose",
   "description": "Just a simple mongoose plugin for elastic search indexing",
-  "version": "0.0.9",
+  "version": "1.1.0",
+  "contributors": [{
+    "name": "Brian Thibault",
+    "email": "thibault@clarastream.com"
+  }],
   "keywords": [
     "mongoose",
     "mongodb",
@@ -13,12 +17,14 @@
     "type": "git",
     "url": "git://github.com/Waidd/elasticmongoose"
   },
-  "main": "lib/elasticmongoose.js",
+  "main": "lib/elasticgoose.js",
   "dependencies": {
-    "elasticsearch": "~2.1.4",
+    "elasticsearch": "4.0.x",
     "underscore": "~1.5.2",
     "q": "~0.9.7",
-    "winston": "~0.7.2"
+    "winston": "~0.7.2",
+    "async": "~0.9",
+    "mongoose": "~3.8.16"
   },
   "peerDependencies": {
     "mongoose": "3.8.x"
